@@ -1,77 +1,74 @@
-(function () {
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('NarrowItDownApp', [])
-.controller('NarrowItDownController', NarrowItDownController)
-.service('MenuSearchService', MenuSearchService)
-.constant('ApiBasePath', "https://davids-restaurant.herokuapp.com/menu_items.json")
-.directive('foundItems', foundItemsDirective);
+    angular.module('NarrowItDownApp', [])
+        .controller('NarrowItDownController', NarrowItDownController)
+        .service('MenuSearchService', MenuSearchService)
+        .constant('ApiBasePath', "https://davids-restaurant.herokuapp.com")
+        .directive('foundItems', FoundItems);
 
-function foundItemsDirective(){
-	var ddo = {
-		restrict: "E",
-		templateUrl : 'foundItems.html',
-		scope : {
-			onRemove : '&',
-			items : '<'
-		}
-	};
-	
-	return ddo;
-}
+    function FoundItems() {
+        var ddo = {
+            restrict: 'E',
+            templateUrl: 'foundItems.html',
+            scope: {
+                foundItems: '<',
+                onEmpty: '<',
+                onRemove: '&'
+            },
+            controller: NarrowItDownController,
+            controllerAs: 'menu',
+            bindToController: true
+        };
 
-NarrowItDownController.$inject = ['MenuSearchService'];
-function NarrowItDownController(MenuSearchService) {
-	var menu = this;	
-	menu.search = '';
-	
-	menu.getMatchedMenuItems = function(){
-		var promise = MenuSearchService.getMenu(menu.search);
-		menu.found = [];
-		var notFound = false;
-		
-		promise.then(function (response) {
-			
-			for(var i=0;i<response.data.menu_items.length;i++){
-				if(response.data.menu_items[i].description.indexOf(menu.search)>0 || menu.search.length == 0){
-					menu.found.push(response.data.menu_items[i]);
-				}
-			}
-			
-			if(menu.found.length===0){
-				menu.notFound = true;
-			}else{
-				menu.notFound = false;
-			}
-		})
-		.catch(function (error) {
-			console.log("Error on load search");
-		});
-	};
-	
-	menu.removeItem = function (itemIndex) {
-		menu.found.splice(itemIndex,1);
-		if(menu.found.length===0){
-			menu.notFound = true;
-		}else{
-			menu.notFound = false;
-		}
-	};
-}
+        return ddo;
+    }
 
+    NarrowItDownController.$inject = ['MenuSearchService'];
 
-MenuSearchService.$inject = ['$http', 'ApiBasePath'];
-function MenuSearchService($http, ApiBasePath) {
-  var service = this;
+    function NarrowItDownController(MenuSearchService) {
+        var menu = this;
+        menu.shortName = '';
 
-  service.getMenu = function (description) {
-    var response = $http({
-      method: "GET",
-      url: (ApiBasePath),
-    });
-	
-    return response;
-  };
-}
+        menu.matchedMenuItems = function(searchTerm) {
+            var promise = MenuSearchService.getMatchedMenuItems(searchTerm);
 
+            promise.then(function(items) {
+                if (items && items.length > 0) {
+                    menu.message = '';
+                    menu.found = items;
+                } else {
+                    menu.message = 'Nothing found!';
+                    menu.found = [];
+                }
+            });
+        };
+
+        menu.removeMenuItem = function(itemIndex) {
+            menu.found.splice(itemIndex, 1);
+        }
+    }
+
+    MenuSearchService.$inject = ['$http', 'ApiBasePath'];
+
+    function MenuSearchService($http, ApiBasePath) {
+        var service = this;
+
+        service.getMatchedMenuItems = function(searchTerm) {
+            return $http({
+                method: "GET",
+                url: (ApiBasePath + "/menu_items.json")
+            }).then(function(response) {
+                var foundItems = [];
+
+                for (var i = 0; i < response.data['menu_items'].length; i++) {
+                    if (searchTerm.length > 0 && response.data['menu_items'][i]['description'].toLowerCase().indexOf(searchTerm) !== -1) {
+                        foundItems.push(response.data['menu_items'][i]);
+                    }
+                }
+
+                return foundItems;
+            });
+        };
+    }
 })();
