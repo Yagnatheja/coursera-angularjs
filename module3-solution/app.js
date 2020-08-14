@@ -9,7 +9,7 @@
 
     function FoundItems() {
         var ddo = {
-            
+            restrict: 'E',
             templateUrl: 'foundItems.html',
             scope: {
                 foundItems: '<',
@@ -27,25 +27,25 @@
     NarrowItDownController.$inject = ['MenuSearchService'];
 
     function NarrowItDownController(MenuSearchService) {
-        var menu = this;
-        menu.shortName = '';
+        var ctrl = this;
+        ctrl.shortName = '';
 
-        menu.matchedMenuItems = function(searchTerm) {
+        ctrl.matchedMenuItems = function(searchTerm) {
             var promise = MenuSearchService.getMatchedMenuItems(searchTerm);
 
             promise.then(function(items) {
                 if (items && items.length > 0) {
-                    menu.message = '';
-                    menu.found = items;
+                    ctrl.message = '';
+                    ctrl.found = items;
                 } else {
-                    menu.message = 'Nothing found!';
-                    menu.found = [];
+                    ctrl.message = 'Nothing found!';
+                    ctrl.found = [];
                 }
             });
         };
 
-        menu.removeMenuItem = function(itemIndex) {
-            menu.found.splice(itemIndex, 1);
+        ctrl.removeMenuItem = function(itemIndex) {
+            ctrl.found.splice(itemIndex, 1);
         }
     }
 
