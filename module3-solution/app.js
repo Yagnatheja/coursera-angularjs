@@ -83,7 +83,7 @@
                     if(searchTerm !== null && searchTerm !== "" &&
                        (items[i].description.toLowerCase()).indexOf(searchTerm.toLowerCase()) !== -1)
                     {
-                        found.push(items[i]);
+                        found.push(tems[i]);
                     }
                 }
                 return {foundItems: found};
