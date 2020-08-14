@@ -16,9 +16,9 @@
       <input type="text" placeholder="search term" class="form-control" ng-model="nidc.searchTerm">
     </div>
     <div class="form-group narrow-button">
-      <button class="btn btn-primary" ng-click="nidc.narrowItDown()">Narrow It Down For Me!</button>
+      <button class="btn btn-primary" ng-click="nidc.narrowIt()">Narrow It Down For Me!</button>
     </div>
-    <found-items items="nidc.found" on-remove="nidc.removeItem(index)"></found-items>
+    <found-items found="nidc.items" on-remove="nidc.removeItem(index)"></found-items>
   </div>
 
 </body>
