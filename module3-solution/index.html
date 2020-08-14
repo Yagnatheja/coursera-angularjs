@@ -1,5 +1,6 @@
+
 <!doctype html>
-<html lang="en" ng-app="NarrowItDownApp">
+<html lang="en" ng-app ="NarrowItDownApp">
   <head>
     <title>Narrow Down Your Menu Choice</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,16 +10,18 @@
     <script src="app.js"></script>
   </head>
 <body>
-   <div class="container" ng-controller="NarrowItDownController as nidc">
+   <div ng-controller="NarrowItDownController as menu"class="container">
     <h1>Narrow Down Your Chinese Menu Choice</h1>
 
     <div class="form-group">
-      <input type="text" placeholder="search term" class="form-control" ng-model="nidc.searchTerm">
+      <input ng-model ="menu.shortName"  type="text" placeholder="search term" class="form-control">
     </div>
     <div class="form-group narrow-button">
-      <button class="btn btn-primary" ng-click="nidc.matchedMenuItems(nidc.searchTerm)">Narrow It Down For Me!</button>
+      <button ng-click="menu.matchedMenuItems(menu.shortName)" class="btn btn-primary">Narrow It Down For Me!</button>
     </div>
-    <found-items found-items="nidc.found" on-remove="nidc.removeItem(index)"></found-items>
+
+    <!-- found-items should be implemented as a component -->
+    <found-items found-items="menu.found" on-remove="menu.removeMenuItem(index)" on-empty="menu.message">></found-items>
   </div>
 
 </body>
